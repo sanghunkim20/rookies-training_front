@@ -7,12 +7,23 @@ import {
   Typography,
   Container,
 } from "@mui/material";
+import axios from "axios";
 
 function HoonLogin() {
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic
-    console.log("Form submitted");
+    try {
+      const data = {
+        email: e.target.email.value,
+        password: e.target.password.value,
+      };
+      axios.post("http://localhost:8080/hoon/users/login", data).then((res) => {
+        alert("로그인이 되었습니다.");
+        window.location.href = "/";
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

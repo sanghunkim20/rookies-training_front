@@ -7,12 +7,25 @@ import {
   Typography,
   Container,
 } from "@mui/material";
+import axios from "axios";
 
 function HoonRegister() {
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Form submission logic
-    console.log("Form submitted");
+    try {
+      const data = {
+        name: e.target.name.value,
+        email: e.target.email.value,
+        password: e.target.password.value,
+      };
+      axios.post("http://localhost:8080/hoon/users/create", data).then((res) => {
+        alert("회원가입이 완료되었습니다.");
+        window.location.href = "/";
+      });
+    }
+    catch (error) {
+      console.error(error);
+    }
   };
 
   return (
