@@ -8,25 +8,51 @@ import {
   Container,
 } from "@mui/material";
 import axios from "axios";
+import { useState } from "react";
 
 function HoonRegister() {
-  const handleSubmit = (e) => {
+  const [user, setUser] = useState({
+    name: "",
+    email: "",
+    password: "",
+  });
+
+  const inputChangeHandler = (e) => {
+    const { name, value } = e.target;
+    // 전체 데이터를 카피하고, 변경된 부분만 대체 처리
+    setUser({ ...user, [name]: value });
+  };
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = {
-        name: e.target.name.value,
-        email: e.target.email.value,
-        password: e.target.password.value,
-      };
-      axios.post("http://localhost:8080/hoon/users/create", data).then((res) => {
-        alert("회원가입이 완료되었습니다.");
-        window.location.href = "/";
-      });
-    }
-    catch (error) {
-      console.error(error);
+    try{
+      console.log(user);
+      await axios.post('/users/create', user);
+      alert('회원가입 성공');
+      // 홈으로 이동(로그인)
+      window.location.href = '/';
+    } catch (error) {
+      console.log('회원가입 오류: ' + error);
     }
   };
+
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const data = {
+  //       name: e.target.name.value,
+  //       email: e.target.email.value,
+  //       password: e.target.password.value,
+  //     };
+  //     axios.post("/users/create", data).then((res) => {
+  //       alert("회원가입이 완료되었습니다.");
+  //       window.location.href = "/";
+  //     });
+  //   }
+  //   catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <Container maxWidth="sm">
@@ -55,6 +81,7 @@ function HoonRegister() {
                 label="Name"
                 name="name"
                 autoComplete="name"
+                onChange={inputChangeHandler}
               />
             </Grid>
             <Grid item xs={12}>
@@ -65,6 +92,7 @@ function HoonRegister() {
                 label="Email Address"
                 name="email"
                 autoComplete="email"
+                onChange={inputChangeHandler}
               />
             </Grid>
             <Grid item xs={12}>
@@ -76,17 +104,7 @@ function HoonRegister() {
                 type="password"
                 id="password"
                 autoComplete="new-password"
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                required
-                fullWidth
-                name="confirmPassword"
-                label="Confirm Password"
-                type="password"
-                id="confirmPassword"
-                autoComplete="new-password"
+                onChange={inputChangeHandler}
               />
             </Grid>
           </Grid>

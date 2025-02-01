@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import {
   Box,
   Grid,
@@ -9,22 +10,51 @@ import {
 } from "@mui/material";
 import axios from "axios";
 
+// axios 통신을 위해 기본 URL 설정
+axios.defaults.baseURL = process.env.REACT_APP_API_URL;
+
 function HoonLogin() {
-  const handleSubmit = (e) => {
+  const [email, setEmail] = useState("");
+  const navigate = useNavigate();
+
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    try {
-      const data = {
-        email: e.target.email.value,
-        password: e.target.password.value,
-      };
-      axios.post("http://localhost:8080/hoon/users/login", data).then((res) => {
-        alert("로그인이 되었습니다.");
-        window.location.href = "/";
-      });
-    } catch (error) {
-      console.error(error);
+
+    const formData = new FormData();
+    formData.append("email", e.target.email.value);
+    formData.append("password", e.target.password.value);
+
+    const response = await axios({
+      url: "/loginCheck",
+      method: "POST",
+      data: formData,
+      withCredentials: true,
+    });
+
+    if (response.status === 200) {
+      alert("로그인에 성공하였습니다.");
+      console.log("결과 확인 : " + response.data);
+      navigate("/home", { state: { userDetailData: response.data } });
+    } else {
+      alert("로그인에 실패하였습니다.");
+      console.log("결과 확인 : " + response);
     }
   };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  //   try {
+  //     const data = {
+  //       email: e.target.email.value,
+  //       password: e.target.password.value,
+  //     };
+  //     axios.post("/users/login", data).then((res) => {
+  //       alert("로그인이 되었습니다.");
+  //       window.location.href = "/";
+  //     });
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  // };
 
   return (
     <Container maxWidth="sm">
